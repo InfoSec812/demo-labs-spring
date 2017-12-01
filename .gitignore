@@ -4,3 +4,5 @@
 **/*.iml
 target
 target/**
+casl-ansible
+casl-ansible/**
