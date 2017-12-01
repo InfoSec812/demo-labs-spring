@@ -65,21 +65,21 @@ openshift_cluster_content:
     - sonar
 - object: app-builds
   content:
-  - name: java-app-build
+  - name: demo-labs-spring-build
     template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/s2i-app-build/template-no-secrets.json"
     params: "{{ inventory_dir }}/params/build/demo-labs-spring"
     namespace: labs-ci-cd
 - object: app-deploy
   content:
   - name: demo-labs-spring-dev
-    template: "{{ inventory_dir }}/../templates/demo-labs-spring-dev.json"
+    template: "{{ inventory_dir }}/templates/demo-labs-spring-dev.json"
     params: "{{ inventory_dir }}/params/deploy/demo-labs-spring-dev"
     namespace: labs-dev
     tags:
     - demo-labs-spring
   - name: demo-labs-spring-demo
-    template: "{{ inventory_dir }}/../templates/demo-labs-spring-demo.json"
-    params: "{{ inventory_dir }}/params/deploy/demo-labs-spring-dev"
+    template: "{{ inventory_dir }}/templates/demo-labs-spring-demo.json"
+    params: "{{ inventory_dir }}/params/deploy/demo-labs-spring-demo"
     namespace: labs-dev
     tags:
     - demo-labs-spring

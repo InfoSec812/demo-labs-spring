@@ -29,17 +29,17 @@ DevOps environment.
   
 ## Running this demo
 
-* When the demo is first deployed, the CI/CD environment will be deployed
+1. When the demo is first deployed, the CI/CD environment will be deployed
   * Could take as long as 30 minutes
-* Once the CI/CD environment is deployed, the Spring application will be built
+2. Once the CI/CD environment is deployed, the Spring application will be built
   * Manual approval to deploy to the `Demo` environment will be required
-* The initial build of the application WILL fail
+3. The initial build of the application WILL fail
   * This is intentional... The initial build has insecure depdendencies and insecure web semantics
-* The first step is to show the failed build and show the reasons for the failed build
+4. The first step is to show the failed build and show the reasons for the failed build
   * Log in to Jenkins, display the OWASP Dependency Check Report
-* Fix the dependency check problem by switching to the `Step_1` branch
-* Trigger the pipeline to rebuild
-* Show that the build failed because of the ZAP scan finding insecure practices in the web app
-* Fix the ZAP scan issue by switching to the `Step_2` branch
-* Trigger the pipeline to rebuild
-* Show that the build now passes both scans
+5. Fix the dependency check problem by switching to the `Step_1` branch
+6. Trigger the pipeline to rebuild
+7. Show that the build failed because of the ZAP scan finding insecure practices in the web app
+8. Fix the ZAP scan issue by switching to the `Step_2` branch
+9. Trigger the pipeline to rebuild
+10. Show that the build now passes both scans

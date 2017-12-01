@@ -1,0 +1,2 @@
+PIPELINES_NAMESPACE=labs-ci-cd
+NAME=demo-labs-spring

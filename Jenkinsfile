@@ -50,6 +50,15 @@ node('mvn-build-pod') {
         stage('Build App') {
             // TODO - introduce a variable here
             sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report"
+            publishHTML([  // Publish JaCoCo Coverage Report
+                           allowMissing: false,
+                           alwaysLinkToLastBuild: false,
+                           keepAll: false,
+                           reportDir: 'target/site/jacoco',
+                           reportFiles: 'index.html',
+                           reportName: 'JaCoCo Test Coverage Report',
+                           reportTitles: 'JaCoCo Test Coverage Report'
+            ])
         }
 
         stage('Check dependencies') {

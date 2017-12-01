@@ -1,0 +1,4 @@
+PIPELINE_SOURCE_REPOSITORY_URL=https://github.com/InfoSec812/demo-labs-spring.git
+PIPELINE_SOURCE_REPOSITORY_REF=master
+NAME=demo-labs-spring
+S2I_BASE_IMAGE=redhat-openjdk18-openshift:latest
