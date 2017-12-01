@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World Test</title>
+    <style>
+        .header {
+            margin: 0px;
+            padding: 0px;
+            text-align: center;
+            align-content: center;
+            width: available;
+        }
+        .logo {
+            height: 160px;
+        }
+        .messageArea {
+            padding: 4px;
+            margin: auto;
+        }
+        button {
+            border: 0px;
+            padding: 3px;
+            background-color: cornflowerblue;
+            border-radius: 0px;
+        }
+        border:active {
+            border: 0px;
+            padding: 3px;
+            background-color: cornflowerblue;
+            border-radius: 0px;
+        }
+    </style>
+    <script
+            src="//code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script language="JavaScript1.5">
+        var sayHello = function() {
+            var name = $('#name')[0].value;
+            console.log(name);
+            $.get('/rest/v1/hello?name='+name, function(data, status) {
+                $('#message').html(data);
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="header"><img src="images/logo.svg" class="logo" /><h2>Red Hat Open Innovation Labs Demo</h2></div>
+<div class="form">
+    <input type="text" size="40" alt="Your name" id="name" />
+    <button onclick="sayHello()">Say Hello</button>
+</div>
+<div id="message" class="messageArea"></div>
+</body>
+</html>
