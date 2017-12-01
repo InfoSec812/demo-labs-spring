@@ -21,22 +21,22 @@ DevOps environment.
 
 1. Check out this repository
 2. Install [casl-ansible](https://github.com/redhat-cop/casl-ansible) using Ansible Galaxy
-  * `ansible-galaxy install --roles-path . -r requirements.yml`
+   * `ansible-galaxy install --roles-path . -r requirements.yml`
 3. Log on to an OpenShift cluster where the demo will be run
-  * `oc login -u <username> <OCP Master URL>`
+   * `oc login -u <username> <OCP Master URL>`
 4. Deploy the application and CI/CD environment to OpenShift
-  * `ansible-playbook --connection=local -i inventory casl-ansible/playbooks/openshift-cluster-seed.yml`
+   * `ansible-playbook --connection=local -i inventory casl-ansible/playbooks/openshift-cluster-seed.yml`
   
 ## Running this demo
 
 1. When the demo is first deployed, the CI/CD environment will be deployed
-    * Could take as long as 30 minutes
+   * Could take as long as 30 minutes
 2. Once the CI/CD environment is deployed, the Spring application will be built
-    * Manual approval to deploy to the `Demo` environment will be required
+   * Manual approval to deploy to the `Demo` environment will be required
 3. The initial build of the application WILL fail
-    * This is intentional... The initial build has insecure depdendencies and insecure web semantics
+   * This is intentional... The initial build has insecure depdendencies and insecure web semantics
 4. The first step is to show the failed build and show the reasons for the failed build
-    * Log in to Jenkins, display the OWASP Dependency Check Report
+   * Log in to Jenkins, display the OWASP Dependency Check Report
 5. Fix the dependency check problem by switching to the `Step_1` branch
 6. Trigger the pipeline to rebuild
 7. Show that the build failed because of the ZAP scan finding insecure practices in the web app
