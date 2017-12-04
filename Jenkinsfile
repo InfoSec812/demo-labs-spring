@@ -76,7 +76,7 @@ node('mvn-build-pod') {
 
         stage('Perform Quality Analysis') {
             withSonarQubeEnv {
-                sh "mvn sonar:sonar"
+                sh "mvn sonar:sonar -Dsonar.analysis.scmRevision=${env.CHANGE_ID} -Dsonar.analysis.buildNumber=${env.BUILD_NUMBER}"
             }
         }
 
