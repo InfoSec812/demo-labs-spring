@@ -100,7 +100,7 @@ node('') {
 
 node('zap-build-pod') {
     stage('ZAP Scan') {
-        def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${env.DEV_PROJECT}/'
+        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}-${env.TEST_PROJECT}/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
         echo "Return value is: ${retVal}"
     }
