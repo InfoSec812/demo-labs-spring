@@ -63,6 +63,15 @@ node('mvn-build-pod') {
 
         stage('Check dependencies') {
             sh "mvn dependency-check:check"
+            publishHTML([  // Publish Dependency Check Report
+                           allowMissing: false,
+                           alwaysLinkToLastBuild: false,
+                           keepAll: false,
+                           reportDir: 'target/',
+                           reportFiles: 'dependency-check-report.html',
+                           reportName: 'Dependency Check Report',
+                           reportTitles: 'Dependency Check Report'
+            ])
         }
 
         stage('Perform Quality Analysis') {
