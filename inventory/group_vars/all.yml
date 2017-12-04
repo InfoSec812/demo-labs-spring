@@ -5,23 +5,26 @@ openshift_cluster_content:
   - name: ci-cd
     template: "https://raw.githubusercontent.com/redhat-cop/cluster-lifecycle/master/files/projectrequest/template.yml"
     params: "{{ inventory_dir }}/params/projectrequests/ci-cd"
+    template_action: create
     tags:
     - projects
   - name: dev
     template: "https://raw.githubusercontent.com/redhat-cop/cluster-lifecycle/master/files/projectrequest/template.yml"
     params: "{{ inventory_dir }}/params/projectrequests/dev"
+    template_action: create
     tags:
     - projects
   - name: demo
     template: "https://raw.githubusercontent.com/redhat-cop/cluster-lifecycle/master/files/projectrequest/template.yml"
     params: "{{ inventory_dir }}/params/projectrequests/demo"
+    template_action: create
     tags:
     - projects
 - object: ci-cd-builds
   content:
   - name: jenkins-s2i
-    template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/jenkins-s2i-build/template-with-secret.json"
-    params: "{{ inventory_dir params/build/jenkins"
+    template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/jenkins-s2i-build/template.json"
+    params: "{{ inventory_dir }}/params/build/jenkins_s2i"
     namespace: labs-ci-cd
     tags:
     - jenkins
@@ -51,15 +54,15 @@ openshift_cluster_content:
     namespace: labs-ci-cd
     tags:
     - nexus
-  - name: sonarqube
-    template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/sonarqube/template.json"
-    params: "{{ inventory_dir }}/params/build-and-deploy/sonarqube"
-    namespace: labs-ci-cd
-    tags:
-    - sonar
   - name: sonarqube-postgresql
     template: "openshift//postgresql-persistent"
     params: "{{ inventory_dir }}/params/deploy/postgresql"
+    namespace: labs-ci-cd
+    tags:
+    - sonar
+  - name: sonarqube
+    template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/sonarqube/template.json"
+    params: "{{ inventory_dir }}/params/build-and-deploy/sonarqube"
     namespace: labs-ci-cd
     tags:
     - sonar
@@ -78,7 +81,7 @@ openshift_cluster_content:
     tags:
     - demo-labs-spring
   - name: demo-labs-spring-demo
-    template: "{{ inventory_dir }}/templates/demo-labs-spring-demo.json"
+    template: "{{ inventory_dir }}/templates/demo-labs-spring-dev.json"
     params: "{{ inventory_dir }}/params/deploy/demo-labs-spring-demo"
     namespace: labs-dev
     tags:
