@@ -83,6 +83,6 @@ openshift_cluster_content:
   - name: demo-labs-spring-demo
     template: "{{ inventory_dir }}/templates/demo-labs-spring-dev.json"
     params: "{{ inventory_dir }}/params/deploy/demo-labs-spring-demo"
-    namespace: labs-dev
+    namespace: labs-demo
     tags:
     - demo-labs-spring
