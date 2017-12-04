@@ -52,8 +52,8 @@ node('mvn-build-pod') {
             sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report"
             publishHTML([  // Publish JaCoCo Coverage Report
                            allowMissing: false,
-                           alwaysLinkToLastBuild: false,
-                           keepAll: false,
+                           alwaysLinkToLastBuild: true,
+                           keepAll: true,
                            reportDir: 'target/site/jacoco',
                            reportFiles: 'index.html',
                            reportName: 'JaCoCo Test Coverage Report',
@@ -65,8 +65,8 @@ node('mvn-build-pod') {
             sh "mvn dependency-check:check"
             publishHTML([  // Publish Dependency Check Report
                            allowMissing: false,
-                           alwaysLinkToLastBuild: false,
-                           keepAll: false,
+                           alwaysLinkToLastBuild: true,
+                           keepAll: true,
                            reportDir: 'target/',
                            reportFiles: 'dependency-check-report.html',
                            reportName: 'Dependency Check Report',
