@@ -109,7 +109,7 @@ node('') {
 
 node('zap-build-pod') {
     stage('ZAP Scan') {
-        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}-${env.TEST_PROJECT}.apps/"
+        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}.labs-dev.svc.cluster.local/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
         if (retVal > 0) {
             error "Build failed OWASP ZAP scan, please remediate web application security issues and retry."
