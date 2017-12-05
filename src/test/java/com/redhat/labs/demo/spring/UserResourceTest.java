@@ -1,8 +1,8 @@
 package com.redhat.labs.demo.spring;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class UserResourceTest {
 
@@ -10,6 +10,6 @@ public class UserResourceTest {
     public void hello() {
         UserResource underTest = new UserResource();
 
-        assertTrue(underTest.hello("Test").contentEquals("Hello Test!"), "Response MUST be equal to expected value.");
+        assertTrue("Response MUST be equal to expected value.", underTest.hello("Test").contentEquals("Hello Test!"));
     }
 }
