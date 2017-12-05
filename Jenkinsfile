@@ -102,7 +102,6 @@ node('') {
 
     // no user changes should be needed below this point
     stage('Deploy to Dev') {
-        input "Promote Application to Dev?"
         openshiftTag(apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", destStream: "${env.APP_NAME}", destTag: 'latest', destinationAuthToken: "${env.OCP_TOKEN}", destinationNamespace: "${env.DEV_PROJECT}", namespace: "${env.OPENSHIFT_BUILD_NAMESPACE}", srcStream: "${env.APP_NAME}", srcTag: 'latest')
         openshiftVerifyDeployment(apiURL: "${env.OCP_API_SERVER}", authToken: "${env.OCP_TOKEN}", depCfg: "${env.APP_NAME}", namespace: "${env.DEV_PROJECT}", verifyReplicaCount: true)
     }
@@ -112,7 +111,9 @@ node('zap-build-pod') {
     stage('ZAP Scan') {
         def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}-${env.TEST_PROJECT}.apps/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
-        echo "Return value is: ${retVal}"
+        if (retVal > 0) {
+            error "Build failed OWASP ZAP scan, please remediate web application security issues and retry."
+        }
     }
 }
 
