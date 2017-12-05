@@ -23,10 +23,6 @@ metadata:
     template.openshift.io/support-url: https://access.redhat.com
   creationTimestamp: 2017-10-27T17:40:08Z
   name: jenkins-ephemeral
-  namespace: openshift
-  resourceVersion: "884"
-  selfLink: /oapi/v1/namespaces/openshift/templates/jenkins-ephemeral
-  uid: e01a5919-bb3d-11e7-9fef-fa163edcbc48
 objects:
 - apiVersion: v1
   kind: Route
@@ -62,7 +58,7 @@ objects:
               {
                   "name": "await-sonarqube",
                   "image": "busybox",
-                  "command": ["sh", "-c", "until nslookup sonarqube; do echo waiting for sonarqube; sleep 2; done;"]
+                  "command": ["sh", "-c", "until nslookup sonarqube; do echo \"Waiting for SonarQube\"; sleep 2; done;"]
               }
           ]'
       spec:
