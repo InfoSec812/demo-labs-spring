@@ -53,14 +53,6 @@ objects:
       metadata:
         labels:
           name: ${JENKINS_SERVICE_NAME}
-        annotations:
-          pod.beta.kubernetes.io/init-containers: '[
-              {
-                  "name": "await-sonarqube",
-                  "image": "busybox",
-                  "command": ["sh", "-c", "until nslookup sonarqube; do echo \"Waiting for SonarQube\"; sleep 2; done;"]
-              }
-          ]'
       spec:
         containers:
         - capabilities: {}
@@ -104,6 +96,20 @@ objects:
           - mountPath: /var/lib/jenkins
             name: ${JENKINS_SERVICE_NAME}-data
         dnsPolicy: ClusterFirst
+        initContainers:
+          - command:
+              - sh
+              - '-c'
+              - >-
+                until curl -sLo /dev/null
+                http://sonarqube.labs-ci-cd.svc.cluster.local:9000/; do sleep 2;
+                done
+            image: registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift
+            imagePullPolicy: Always
+            name: await-sonarqube
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
         volumes:
