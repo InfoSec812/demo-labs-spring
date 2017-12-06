@@ -5,7 +5,7 @@
  **/
 node (''){
     // these should align to the projects in the Application Inventory
-    env.NAMESPACE = env.OPENSHIFT_BUILD_NAMESPACE.reverse().drop(6).reverse()
+    env.NAMESPACE = 'labs'
     env.DEV_PROJECT = "${env.NAMESPACE}-dev"
     env.TEST_PROJECT = "${env.NAMESPACE}-demo"
 
