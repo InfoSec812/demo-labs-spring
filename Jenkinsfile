@@ -40,7 +40,7 @@ node (''){
 }
 
 podTemplate(label: 'mvn-cache-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
-        persistentVolumeClaim(mountPath: '/tmp/cache', claimName: 'mvn-artifact-cache', readOnly: false)
+        persistentVolumeClaim(mountPath: '/tmp/cache', claimName: 'mvn-depcheck-cache', readOnly: false)
 ]) {
     /**
      this section of the pipeline executes on a custom mvn build slave.
