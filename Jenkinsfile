@@ -55,7 +55,7 @@ podTemplate(label: 'mvn-cache-pod', inheritFrom: 'mvn-build-pod', cloud: 'opensh
         dir("${env.SOURCE_CONTEXT_DIR}") {
             stage('Build App') {
                 // TODO - introduce a variable here
-                sh "mvn -Dmaven.repo.local=/tmp/cache/repository org.jacoco:jacoco-maven-plugin:prepare-agent compile org.jacoco:jacoco-maven-plugin:report"
+                sh "mvn -Dmaven.repo.local=/tmp/cache/repository org.jacoco:jacoco-maven-plugin:prepare-agent compile test org.jacoco:jacoco-maven-plugin:report"
                 publishHTML([  // Publish JaCoCo Coverage Report
                                allowMissing: false,
                                alwaysLinkToLastBuild: true,
