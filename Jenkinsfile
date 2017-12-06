@@ -33,6 +33,11 @@ node (''){
     // these are defaults that will help run openshift automation
     env.OCP_API_SERVER = "${env.OPENSHIFT_API_URL}"
     env.OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+
+    // Extract dev environment URL for application
+    def ocCommand = env.oc_cmd
+    def devRoutes = sh returnStdout: true, script: "${ocCommand} get routes -n labs-dev"
+    def appHost = (devRoutes =~ /(demo-labs-spring-[^ \t]*)/)[0][1]
 }
 
 
@@ -109,7 +114,7 @@ node('') {
 
 node('zap-build-pod') {
     stage('ZAP Scan') {
-        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}.labs-dev.svc.cluster.local:8080/"
+        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${appHost}/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
         if (retVal > 0) {
             error "Build failed OWASP ZAP scan, please remediate web application security issues and retry."
