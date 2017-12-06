@@ -53,7 +53,7 @@ node('mvn-build-pod') {
     dir("${env.SOURCE_CONTEXT_DIR}") {
         stage('Build App') {
             // TODO - introduce a variable here
-            sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report"
+            sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile org.jacoco:jacoco-maven-plugin:report"
             publishHTML([  // Publish JaCoCo Coverage Report
                            allowMissing: false,
                            alwaysLinkToLastBuild: true,
@@ -66,7 +66,7 @@ node('mvn-build-pod') {
         }
 
         stage('Check dependencies') {
-            sh "mvn dependency-check:check"
+            sh "mvn package"
             publishHTML([  // Publish Dependency Check Report
                            allowMissing: false,
                            alwaysLinkToLastBuild: true,
