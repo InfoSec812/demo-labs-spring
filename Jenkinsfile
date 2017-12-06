@@ -35,8 +35,8 @@ node (''){
     env.OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 
     // Extract dev environment URL for application
-    def devRoutes = sh returnStdout: true, script: "${env.oc_cmd} get routes -n labs-dev"
-    def appHost = (devRoutes =~ /(demo-labs-spring-[^ \t]*)/)[0][1]
+    def devRoutes = sh returnStdout: true, script: "${env.oc_cmd} get route demo-labs-spring -n labs-dev --template={{.spec.host}}"
+    env.APP_DEV_HOST = devRoutes.trim()
 }
 
 
@@ -113,7 +113,7 @@ node('') {
 
 node('zap-build-pod') {
     stage('ZAP Scan') {
-        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${appHost}/"
+        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_DEV_HOST}/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
         if (retVal > 0) {
             error "Build failed OWASP ZAP scan, please remediate web application security issues and retry."
