@@ -39,14 +39,14 @@ node (''){
     env.APP_DEV_HOST = devRoutes.trim()
 }
 
-podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
+podTemplate(label: 'mvn-cache-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
         persistentVolumeClaim(mountPath: '/tmp/cache', claimName: 'mvn-artifact-cache', readOnly: false)
 ]) {
     /**
      this section of the pipeline executes on a custom mvn build slave.
      you should not need to change anything below unless you need new stages or new integrations (e.g. Cucumber Reports or Sonar)
      **/
-    node('mvn-depcheck-pod') {
+    node('mvn-cache-pod') {
 
         stage('SCM Checkout') {
             checkout scm
