@@ -1,0 +1,2 @@
+NAME=mvn-depcheck-cache
+SIZE=5Gi
