@@ -73,6 +73,7 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <dependency-check-maven.dataDirectory>/tmp/cvecache</dependency-check-maven.dataDirectory>
     </properties>
 
     <build>
@@ -86,6 +87,7 @@
                     <suppressionFiles>
                         <suppressionFile>${basedir}/tomcat.xml</suppressionFile>
                     </suppressionFiles>
+                    <dataDirectory>${dependency-check-maven.dataDirectory}</dataDirectory>
                 </configuration>
                 <executions>
                     <execution>
