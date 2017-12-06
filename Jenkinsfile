@@ -40,7 +40,7 @@ node (''){
 }
 
 podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
-        persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'mvn-artifact-cache', readOnly: false)
+        persistentVolumeClaim(mountPath: '/tmp/cache', claimName: 'mvn-artifact-cache', readOnly: false)
 ]) {
     /**
      this section of the pipeline executes on a custom mvn build slave.
@@ -55,7 +55,7 @@ podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'ope
         dir("${env.SOURCE_CONTEXT_DIR}") {
             stage('Build App') {
                 // TODO - introduce a variable here
-                sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile org.jacoco:jacoco-maven-plugin:report"
+                sh "mvn -Dsettings.localRepository=/tmp/cache/repository org.jacoco:jacoco-maven-plugin:prepare-agent compile org.jacoco:jacoco-maven-plugin:report"
                 publishHTML([  // Publish JaCoCo Coverage Report
                                allowMissing: false,
                                alwaysLinkToLastBuild: true,
@@ -68,7 +68,7 @@ podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'ope
             }
 
             stage('Check dependencies') {
-                sh "mvn dependency-check:check package"
+                sh "mvn -Dsettings.localRepository=/tmp/cache/repository dependency-check:check package"
                 publishHTML([  // Publish Dependency Check Report
                                allowMissing: false,
                                alwaysLinkToLastBuild: true,
@@ -82,7 +82,7 @@ podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'ope
 
             stage('Perform Quality Analysis') {
                 withSonarQubeEnv {
-                    sh "mvn sonar:sonar -Dsonar.analysis.scmRevision=${env.CHANGE_ID} -Dsonar.analysis.buildNumber=${env.BUILD_NUMBER}"
+                    sh "mvn -Dsettings.localRepository=/tmp/cache/repository sonar:sonar -Dsonar.analysis.scmRevision=${env.CHANGE_ID} -Dsonar.analysis.buildNumber=${env.BUILD_NUMBER}"
                 }
             }
 
