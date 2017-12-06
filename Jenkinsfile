@@ -40,7 +40,6 @@ node (''){
 }
 
 podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
-        persistentVolumeClaim(mountPath: '/tmp/cvecache', claimName: 'mvn-depcheck-cache', readOnly: false),
         persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'mvn-artifact-cache', readOnly: false)
 ]) {
     /**
@@ -69,7 +68,7 @@ podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'ope
             }
 
             stage('Check dependencies') {
-                sh "mvn package"
+                sh "mvn dependency-check:check package"
                 publishHTML([  // Publish Dependency Check Report
                                allowMissing: false,
                                alwaysLinkToLastBuild: true,
