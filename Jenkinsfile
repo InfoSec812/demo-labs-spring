@@ -39,7 +39,7 @@ node (''){
     env.APP_DEV_HOST = devRoutes.trim()
 }
 
-podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', volumes: [
+podTemplate(label: 'mvn-depcheck-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
     persistentVolumeClaim(mountPath: '/tmp/cvecache', claimName: 'mvn-depcheck-cache', readOnly: false)
 ])
 
