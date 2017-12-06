@@ -33,67 +33,74 @@ node (''){
     // these are defaults that will help run openshift automation
     env.OCP_API_SERVER = "${env.OPENSHIFT_API_URL}"
     env.OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+
+    // Extract dev environment URL for application
+    def devRoutes = sh returnStdout: true, script: "${env.oc_cmd} get route demo-labs-spring -n labs-dev --template={{.spec.host}}"
+    env.APP_DEV_HOST = devRoutes.trim()
 }
 
+podTemplate(label: 'mvn-cache-pod', inheritFrom: 'mvn-build-pod', cloud: 'openshift', volumes: [
+        persistentVolumeClaim(mountPath: '/tmp/cache', claimName: 'mvn-artifact-cache', readOnly: false)
+]) {
+    /**
+     this section of the pipeline executes on a custom mvn build slave.
+     you should not need to change anything below unless you need new stages or new integrations (e.g. Cucumber Reports or Sonar)
+     **/
+    node('mvn-cache-pod') {
 
-/**
- this section of the pipeline executes on a custom mvn build slave.
- you should not need to change anything below unless you need new stages or new integrations (e.g. Cucumber Reports or Sonar)
- **/
-node('mvn-build-pod') {
-
-    stage('SCM Checkout') {
-        checkout scm
-    }
-
-    dir("${env.SOURCE_CONTEXT_DIR}") {
-        stage('Build App') {
-            // TODO - introduce a variable here
-            sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report"
-            publishHTML([  // Publish JaCoCo Coverage Report
-                           allowMissing: false,
-                           alwaysLinkToLastBuild: true,
-                           keepAll: true,
-                           reportDir: 'target/site/jacoco',
-                           reportFiles: 'index.html',
-                           reportName: 'JaCoCo Test Coverage Report',
-                           reportTitles: 'JaCoCo Test Coverage Report'
-            ])
+        stage('SCM Checkout') {
+            checkout scm
         }
 
-        stage('Check dependencies') {
-            sh "mvn dependency-check:check"
-            publishHTML([  // Publish Dependency Check Report
-                           allowMissing: false,
-                           alwaysLinkToLastBuild: true,
-                           keepAll: true,
-                           reportDir: 'target/',
-                           reportFiles: 'dependency-check-report.html',
-                           reportName: 'Dependency Check Report',
-                           reportTitles: 'Dependency Check Report'
-            ])
-        }
-
-        stage('Perform Quality Analysis') {
-            withSonarQubeEnv {
-                sh "mvn sonar:sonar -Dsonar.analysis.scmRevision=${env.CHANGE_ID} -Dsonar.analysis.buildNumber=${env.BUILD_NUMBER}"
+        dir("${env.SOURCE_CONTEXT_DIR}") {
+            stage('Build App') {
+                // TODO - introduce a variable here
+                sh "mvn -Dmaven.repo.local=/tmp/cache/repository org.jacoco:jacoco-maven-plugin:prepare-agent compile test org.jacoco:jacoco-maven-plugin:report"
+                publishHTML([  // Publish JaCoCo Coverage Report
+                               allowMissing: false,
+                               alwaysLinkToLastBuild: true,
+                               keepAll: true,
+                               reportDir: 'target/site/jacoco',
+                               reportFiles: 'index.html',
+                               reportName: 'JaCoCo Test Coverage Report',
+                               reportTitles: 'JaCoCo Test Coverage Report'
+                ])
             }
-        }
 
-        stage('Wait for SonarQube Quality Gate results') {
-            timeout(time: 1, unit: 'HOURS') {
+            stage('Check dependencies') {
+                sh "mvn -Dmaven.repo.local=/tmp/cache/repository dependency-check:check package"
+                publishHTML([  // Publish Dependency Check Report
+                               allowMissing: false,
+                               alwaysLinkToLastBuild: true,
+                               keepAll: true,
+                               reportDir: 'target/',
+                               reportFiles: 'dependency-check-report.html',
+                               reportName: 'Dependency Check Report',
+                               reportTitles: 'Dependency Check Report'
+                ])
+            }
+
+            stage('Perform Quality Analysis') {
                 withSonarQubeEnv {
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    sh "mvn -Dmaven.repo.local=/tmp/cache/repository sonar:sonar -Dsonar.analysis.scmRevision=${env.CHANGE_ID} -Dsonar.analysis.buildNumber=${env.BUILD_NUMBER}"
+                }
+            }
+
+            stage('Wait for SonarQube Quality Gate results') {
+                timeout(time: 1, unit: 'HOURS') {
+                    withSonarQubeEnv {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
                     }
                 }
             }
-        }
 
-        // assumes uber jar is created
-        stage('Build Image') {
-            sh "oc start-build ${env.APP_NAME} --from-dir=${env.UBER_JAR_CONTEXT_DIR} --follow"
+            // assumes uber jar is created
+            stage('Build Image') {
+                sh "oc start-build ${env.APP_NAME} --from-dir=${env.UBER_JAR_CONTEXT_DIR} --follow"
+            }
         }
     }
 }
@@ -109,7 +116,7 @@ node('') {
 
 node('zap-build-pod') {
     stage('ZAP Scan') {
-        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_NAME}.labs-dev.svc.cluster.local:8080/"
+        def retVal = sh returnStatus: true, script: "/zap/zap-baseline.py -r baseline.html -t http://${env.APP_DEV_HOST}/"
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
         if (retVal > 0) {
             error "Build failed OWASP ZAP scan, please remediate web application security issues and retry."

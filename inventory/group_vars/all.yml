@@ -48,6 +48,13 @@ openshift_cluster_content:
     namespace: labs-ci-cd
     tags:
     - jenkins
+  content:
+  - name: mvn-depcheck-cache
+    template: "{{ inventory_dir }}/templates/cache_pvc.yaml"
+    params: "{{ inventory_dir }}/params/deploy/cache_pvc"
+    namespace: labs-ci-cd
+    tags:
+    - jenkins
   - name: nexus
     template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/nexus/template.json"
     params: "{{ inventory_dir }}/params/deploy/nexus"
