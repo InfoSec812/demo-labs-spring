@@ -35,8 +35,7 @@ node (''){
     env.OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
 
     // Extract dev environment URL for application
-    def ocCommand = env.oc_cmd
-    def devRoutes = sh returnStdout: true, script: "${ocCommand} get routes -n labs-dev"
+    def devRoutes = sh returnStdout: true, script: "${env.oc_cmd} get routes -n labs-dev"
     def appHost = (devRoutes =~ /(demo-labs-spring-[^ \t]*)/)[0][1]
 }
 
