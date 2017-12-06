@@ -50,7 +50,7 @@ openshift_cluster_content:
     - jenkins
   content:
   - name: mvn-depcheck-cache
-    template: "{{ inventory_dir }}/templates/cache_pvc.yaml"
+    template: "{{ inventory_dir }}/templates/cache_pvc.yml"
     params: "{{ inventory_dir }}/params/deploy/cache_pvc"
     namespace: labs-ci-cd
     tags:
