@@ -14,7 +14,6 @@ objects:
     resources:
       requests:
         storage: ${SIZE}
-    volumeName: pv0040
   status: {}
 parameters:
 - description: The name of the PVC to be created
