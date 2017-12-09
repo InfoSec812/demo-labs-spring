@@ -23,7 +23,7 @@ openshift_cluster_content:
 - object: ci-cd-builds
   content:
   - name: jenkins-s2i
-    template: "https://raw.githubusercontent.com/rht-labs/labs-ci-cd/v0.3.0/openshift-templates/jenkins-s2i-build/template.json"
+    template: "https://github.com/rht-labs/labs-ci-cd/blob/v0.3.0/openshift-templates/jenkins-s2i-build/template.json"
     params: "{{ inventory_dir }}/params/build/jenkins_s2i"
     namespace: labs-ci-cd
     tags:
